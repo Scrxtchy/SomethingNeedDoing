@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -86,10 +87,23 @@ public class CommandInterface : ICommandInterface
     }
 
     /// <inheritdoc/>
+    public unsafe int GetCollectability()
+    {
+        var addon = this.GetSynthesisAddon();
+        return this.GetNodeTextAsInt(addon->HQPercentage, "Could not parse collectability number in the Synthesis addon");
+    }
+
+    /// <inheritdoc/>
     public unsafe int GetMaxQuality()
     {
         var addon = this.GetSynthesisAddon();
         return this.GetNodeTextAsInt(addon->MaxQuality, "Could not parse max quality number in the Synthesis addon");
+    }
+
+    /// <inheritdoc/>
+    public unsafe int GetHighCollectability()
+    {
+        return int.Parse(this.GetNodeText(addonName: "Synthesis", nodeNumbers: new int[] { 82, 0 }).Replace("～", string.Empty));
     }
 
     /// <inheritdoc/>
@@ -102,13 +116,15 @@ public class CommandInterface : ICommandInterface
 
         if (this.IsCollectable())
         {
-            var current = this.GetQuality();
-            var max = this.GetMaxQuality();
-            return current == max;
+            var current = Service.Configuration.CollectableSkip ? this.GetCollectability() : this.GetQuality();
+            var max = Service.Configuration.CollectableSkip ? this.GetHighCollectability() : this.GetMaxQuality();
+            PluginLog.Debug($"{current}/{max}");
+            return current >= max;
         }
         else
         {
             var percentHq = this.GetPercentHQ();
+            PluginLog.Debug($"{percentHq}%");
             return percentHq == 100;
         }
     }
@@ -153,6 +169,7 @@ public class CommandInterface : ICommandInterface
     public unsafe int GetPercentHQ()
     {
         var addon = this.GetSynthesisAddon();
+        if (!addon->HQPercentage->AtkResNode.IsVisible) return 100;
         var step = this.GetNodeTextAsInt(addon->HQPercentage, "Could not parse percent hq number in the Synthesis addon");
         return step;
     }

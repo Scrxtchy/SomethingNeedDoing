@@ -420,6 +420,18 @@ internal class HelpWindow : Window
             }
 
             DisplayOption("- Skip quality increasing actions when the HQ chance is at 100%%. If you depend on durability increases from Manipulation towards the end of your macro, you will likely want to disable this.");
+
+            var collectableSkip = qualitySkip && Service.Configuration.CollectableSkip;
+            if (!qualitySkip) ImGui.BeginDisabled();
+            if (ImGui.Checkbox("High Collectable Skip", ref collectableSkip))
+            {
+                Service.Configuration.CollectableSkip = collectableSkip;
+                Service.Configuration.Save();
+            }
+
+            if (!qualitySkip) ImGui.EndDisabled();
+            DisplayOption("- Requires Quality Skip. Lowers the required quality for skipping actions when high collectability has been reached");
+
         }
 
         if (ImGui.CollapsingHeader("Loop echo"))
