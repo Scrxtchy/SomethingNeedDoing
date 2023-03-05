@@ -39,6 +39,13 @@ public class CommandInterface : ICommandInterface
     }
 
     /// <inheritdoc/>
+    public unsafe bool IsExpertRecipe()
+    {
+        var addon = this.GetSynthesisAddon();
+        return addon->AtkUnitBase.UldManager.NodeList[23]->IsVisible;
+    }
+
+    /// <inheritdoc/>
     public unsafe string GetCondition(bool lower = true)
     {
         var addon = this.GetSynthesisAddon();
@@ -103,7 +110,7 @@ public class CommandInterface : ICommandInterface
     /// <inheritdoc/>
     public unsafe int GetHighCollectability()
     {
-        return int.Parse(this.GetNodeText(addonName: "Synthesis", nodeNumbers: new int[] { 82, 0 }).Replace("～", string.Empty));
+        return int.Parse(this.GetNodeText(addonName: "Synthesis", nodeNumbers: new int[] { this.IsExpertRecipe() ? 83 : 82, 0 }).Replace("～", string.Empty));
     }
 
     /// <inheritdoc/>
