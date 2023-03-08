@@ -39,6 +39,11 @@ public class SomethingNeedDoingConfiguration : IPluginConfiguration
     public bool QualitySkip { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether to skip quality increasing actions when at high collectability.
+    /// </summary>
+    public bool CollectableSkip { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether to count the /loop number as the total iterations, rather than the amount to loop.
     /// </summary>
     public bool LoopTotal { get; set; } = false;
