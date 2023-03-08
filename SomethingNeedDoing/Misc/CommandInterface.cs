@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -36,13 +35,6 @@ public class CommandInterface : ICommandInterface
     {
         var addon = this.GetSynthesisAddon();
         return addon->AtkUnitBase.UldManager.NodeList[34]->IsVisible;
-    }
-
-    /// <inheritdoc/>
-    public unsafe bool IsExpertRecipe()
-    {
-        var addon = this.GetSynthesisAddon();
-        return addon->AtkUnitBase.UldManager.NodeList[23]->IsVisible;
     }
 
     /// <inheritdoc/>
@@ -110,7 +102,12 @@ public class CommandInterface : ICommandInterface
     /// <inheritdoc/>
     public unsafe int GetHighCollectability()
     {
-        return int.Parse(this.GetNodeText(addonName: "Synthesis", nodeNumbers: new int[] { this.IsExpertRecipe() ? 83 : 82, 0 }).Replace("～", string.Empty));
+        var addon = this.GetSynthesisAddon();
+        for (int i = 82; i <= 84; i++)
+        {
+            if (addon->AtkUnitBase.UldManager.NodeList[i]->IsVisible) return int.Parse(this.GetNodeText(addonName: "Synthesis", nodeNumbers: new int[] { i, 0 }).Replace("～", string.Empty));
+        }
+        throw new MacroCommandError("Could not find High Collectability");
     }
 
     /// <inheritdoc/>
