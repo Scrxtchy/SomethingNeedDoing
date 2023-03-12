@@ -26,6 +26,7 @@ internal class ActionCommand : MacroCommand
     private readonly string actionName;
     private readonly UnsafeModifier unsafeMod;
     private readonly ConditionModifier conditionMod;
+    private readonly QualitySkipModifier qualityMod;
 
     static ActionCommand()
     {
@@ -41,12 +42,13 @@ internal class ActionCommand : MacroCommand
     /// <param name="waitMod">Wait value.</param>
     /// <param name="unsafeMod">Perform the action safely.</param>
     /// <param name="conditionMod">Required crafting condition.</param>
-    private ActionCommand(string text, string actionName, WaitModifier waitMod, UnsafeModifier unsafeMod, ConditionModifier conditionMod)
+    private ActionCommand(string text, string actionName, WaitModifier waitMod, UnsafeModifier unsafeMod, ConditionModifier conditionMod, QualitySkipModifier qualityMod)
         : base(text, waitMod)
     {
         this.actionName = actionName.ToLowerInvariant();
         this.unsafeMod = unsafeMod;
         this.conditionMod = conditionMod;
+        this.qualityMod = qualityMod;
     }
 
     /// <summary>
@@ -65,6 +67,7 @@ internal class ActionCommand : MacroCommand
         _ = WaitModifier.TryParse(ref text, out var waitModifier);
         _ = UnsafeModifier.TryParse(ref text, out var unsafeModifier);
         _ = ConditionModifier.TryParse(ref text, out var conditionModifier);
+        _ = QualitySkipModifier.TryParse(ref text, out var qualityModifier);
 
         var match = Regex.Match(text);
         if (!match.Success)
@@ -72,7 +75,7 @@ internal class ActionCommand : MacroCommand
 
         var nameValue = ExtractAndUnquote(match, "name");
 
-        return new ActionCommand(text, nameValue, waitModifier, unsafeModifier, conditionModifier);
+        return new ActionCommand(text, nameValue, waitModifier, unsafeModifier, conditionModifier, qualityModifier);
     }
 
     /// <inheritdoc/>
@@ -103,7 +106,7 @@ internal class ActionCommand : MacroCommand
                 }
             }
 
-            if (Service.Configuration.QualitySkip && IsSkippableCraftingQualityAction(this.actionName) && CommandInterface.Instance.HasMaxQuality())
+            if (Service.Configuration.QualitySkip && (IsSkippableCraftingQualityAction(this.actionName) || this.qualityMod.IsSkip) && CommandInterface.Instance.HasMaxQuality())
             {
                 PluginLog.Debug($"Max quality skip: {this.Text}");
                 return;

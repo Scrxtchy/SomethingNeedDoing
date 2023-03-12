@@ -202,6 +202,13 @@ internal class HelpWindow : Window
             {
                 "/loop 5 <echo>",
             }),
+        (
+            "qskip",
+            "Informs the macro that a action is associated with quality, allowing it to be skipped if Quality Skip is enabled.",
+            new[]
+            {
+                "/ac Observe <qskip>",
+            }),
     };
 
     private readonly (string Name, string Description, string? Example)[] cliData = new[]
