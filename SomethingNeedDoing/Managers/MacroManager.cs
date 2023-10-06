@@ -66,16 +66,17 @@ internal partial class MacroManager : IDisposable
         this.pausedWaiter.Dispose();
     }
 
-    private void OnLogin(object? sender, EventArgs e)
+    private void OnLogin()
     {
         this.loggedInWaiter.Set();
         this.State = LoopState.Waiting;
     }
 
-    private void OnLogout(object? sender, EventArgs e)
+    // Disabling this enables multi mode or something
+    private void OnLogout()
     {
-        this.loggedInWaiter.Reset();
-        this.State = LoopState.NotLoggedIn;
+        // this.loggedInWaiter.Reset();
+        // this.State = LoopState.NotLoggedIn;
     }
 
     private async void EventLoop()

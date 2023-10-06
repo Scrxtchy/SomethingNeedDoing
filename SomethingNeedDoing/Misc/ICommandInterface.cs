@@ -184,4 +184,25 @@ public interface ICommandInterface
     /// <param name="index">Item number, 0 indexed.</param>
     /// <returns>The item text, or an empty string.</returns>
     public string GetSelectIconStringText(int index);
+
+    /// <summary>
+    /// Get the status of a given character condition.
+    /// </summary>
+    /// <param name="flagName">Flag Name.</param>
+    /// <param name="hasCondition">Bool flag to invert the condition check.</param>
+    /// <returns>Returns true if the player has the condition, false otherwise. Condition inverted if provided with hasCondition=false.</returns>
+    public bool GetCharacterCondition(string flagName, bool hasCondition = true);
+
+    /// <summary>
+    /// Get the status of the player being in a given zone.
+    /// </summary>
+    /// <param name="zoneID">Zone ID/Territory ID.</param>
+    /// <returns>Returns true if the player is in given zone, false otherwise.</returns>
+    public bool IsInZone(int zoneID);
+
+    /// <summary>
+    /// Gets the current zone's ID.
+    /// </summary>
+    /// <returns>Returns the current zone's ID, int.</returns>
+    public int GetZoneID();
 }

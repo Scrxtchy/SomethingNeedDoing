@@ -8,7 +8,9 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Lumina.Excel.GeneratedSheets;
 using SomethingNeedDoing.Exceptions;
+using SomethingNeedDoing.Interface;
 
 namespace SomethingNeedDoing.Misc;
 
@@ -444,6 +446,25 @@ public class CommandInterface : ICommandInterface
 
         return Marshal.PtrToStringUTF8((IntPtr)textPtr) ?? string.Empty;
     }
+
+    /// <inheritdoc/>
+    public bool GetCharacterCondition(string flagName, bool hasCondition = true)
+    {
+        if (Enum.TryParse(typeof(ConditionFlag), flagName, ignoreCase: true, out var enumValue))
+            return hasCondition ? Service.Condition[(ConditionFlag)enumValue] : !Service.Condition[(ConditionFlag)enumValue];
+        else
+            throw new ArgumentException("Invalid flag name", nameof(flagName));
+    }
+
+    /// <inheritdoc/>
+    public bool IsInZone(int zoneID) =>
+        Service.ClientState.TerritoryType == zoneID;
+
+    /// <inheritdoc/>
+    public int GetZoneID() =>
+        Service.ClientState.TerritoryType;
+
+    public static string GetCharacterName() => Service.ClientState.LocalPlayer.Name.ToString();
 
     private unsafe int GetNodeTextAsInt(AtkTextNode* node, string error)
     {
